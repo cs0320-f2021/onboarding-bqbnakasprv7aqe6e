@@ -61,25 +61,23 @@ public final class Main {
       runSparkServer((int) options.valueOf("port"));
     }
 
-    // TODO: Add your REPL here!
+    // TO DO: Add your REPL here!
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
       while ((input = br.readLine()) != null) {
         try {
           input = input.trim();
           String[] arguments = input.split(" ");
-          System.out.println(arguments[1]);
-          System.out.println(arguments.length);
-          System.out.println(arguments[0]);
-          // TODO: complete your REPL by adding commands for addition "add" and subtraction
+          if (!arguments[0].equals("add") && !arguments[0].equals("subtract")) {
+            System.out.println(arguments[0]);
+          }
+          // TO DO: complete your REPL by adding commands for addition "add" and subtraction
           // "subtract"
           if (arguments[0].equals("add") && arguments.length == 3) {
-            MathBot mb = new MathBot();
-            System.out.println(mb.add(Integer.parseInt(arguments[1]),
-                Integer.parseInt(arguments[2])));
+            add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
 //            add(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2]));
           } else if (arguments[0].equals("subtract") && arguments.length == 3) {
-            subtract(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2]));
+            subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
           }
         } catch (Exception e) {
           // e.printStackTrace();
@@ -93,12 +91,12 @@ public final class Main {
 
   }
 
-  private void add(int n1, int n2) {
+  private void add(double n1, double n2) {
     MathBot mb = new MathBot();
     System.out.println(mb.add(n1, n2));
   }
 
-  private void subtract(int n1, int n2) {
+  private void subtract(double n1, double n2) {
     MathBot mb = new MathBot();
     System.out.println(mb.subtract(n1, n2));
   }
