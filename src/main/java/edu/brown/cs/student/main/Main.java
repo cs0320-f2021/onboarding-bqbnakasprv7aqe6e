@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -32,15 +34,15 @@ public final class Main {
   /**
    * The initial method called when execution begins.
    *
-   * @param args An array of command line arguments
+   * @param arguments An array of command line arguments
    */
-  public static void main(String[] args) {
-    new Main(args).run();
+  public static void main(String[] arguments) {
+    new Main(arguments).run();
   }
 
   private String[] args;
 
-  private Main(String[] args) {
+  private Main(String[] arguments) {
     this.args = args;
   }
 
@@ -68,16 +70,25 @@ public final class Main {
         try {
           input = input.trim();
           String[] arguments = input.split(" ");
-          if (!arguments[0].equals("add") && !arguments[0].equals("subtract")) {
-            System.out.println(arguments[0]);
-          }
           // TO DO: complete your REPL by adding commands for addition "add" and subtraction
           // "subtract"
+          if (arguments[0].equals("stars") && arguments.length == 2) {
+            stars(arguments[1]);
+          } else if (arguments[0].equals("naive_neighbors")) {
+            if (arguments.length == 5) {
+              naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
+                  Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]));
+            } else if (arguments.length == 3) {
+              naiveNeighborsName(Integer.parseInt(arguments[1]), arguments[2]);
+            }
+          }
+
           if (arguments[0].equals("add") && arguments.length == 3) {
             add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-//            add(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2]));
           } else if (arguments[0].equals("subtract") && arguments.length == 3) {
             subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+          } else {
+            System.out.println(arguments[0]);
           }
         } catch (Exception e) {
           // e.printStackTrace();
@@ -89,6 +100,19 @@ public final class Main {
       System.out.println("ERROR: Invalid input for REPL");
     }
 
+  }
+
+  private void stars(String filepath) {
+  }
+
+  private List<String> naiveNeighborsCoord(int k, double x, double y, double z) {
+    // Should this be an ArrayList (in signature and actual usage?)
+    return new ArrayList<>();
+  }
+
+  private List<String> naiveNeighborsName(int k, String name) {
+    // Should this be an ArrayList (in signature and actual usage?)
+    return new ArrayList<>();
   }
 
   private void add(double n1, double n2) {
