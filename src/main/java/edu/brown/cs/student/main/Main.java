@@ -103,6 +103,7 @@ public final class Main {
   }
 
   private void stars(String filepath) {
+
   }
 
   private List<String> naiveNeighborsCoord(int k, double x, double y, double z) {
