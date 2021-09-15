@@ -103,7 +103,10 @@ public final class Main {
   }
 
   private void stars(String filepath) {
-
+    // Should type be ArrayList or List?
+    List<Star> starList = new ArrayList<Star>();
+    // for each star
+      // add new star object to list
   }
 
   private List<String> naiveNeighborsCoord(int k, double x, double y, double z) {
