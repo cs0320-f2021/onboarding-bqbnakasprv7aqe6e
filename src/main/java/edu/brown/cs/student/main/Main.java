@@ -45,7 +45,7 @@ public final class Main {
   private String[] args;
 
   private Main(String[] arguments) {
-    this.args = args;
+    this.args = arguments;
   }
 
   @SuppressWarnings("checkstyle:TodoComment")
@@ -74,7 +74,9 @@ public final class Main {
           String[] arguments = input.split(" ");
           // TO DO: complete your REPL by adding commands for addition "add" and subtraction
           // "subtract"
+
           if (arguments[0].equals("stars") && arguments.length == 2) {
+            System.out.println(arguments[1]);
             stars(arguments[1]);
           } else if (arguments[0].equals("naive_neighbors")) {
             if (arguments.length == 5) {
@@ -83,9 +85,7 @@ public final class Main {
             } else if (arguments.length == 3) {
               naiveNeighborsName(Integer.parseInt(arguments[1]), arguments[2]);
             }
-          }
-
-          if (arguments[0].equals("add") && arguments.length == 3) {
+          } else if (arguments[0].equals("add") && arguments.length == 3) {
             add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
           } else if (arguments[0].equals("subtract") && arguments.length == 3) {
             subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
@@ -109,11 +109,11 @@ public final class Main {
     List<Star> starList = new ArrayList<Star>();
     // for each star
       // add new star object to list
-    try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
+    try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
       String input;
       while ((input = br.readLine()) != null) {
         input = input.trim();
-        String[] arguments = input.split(" ");
+        String[] arguments = input.split(",");
 
         Star star = new Star(Integer.parseInt(arguments[0]), arguments[1],
               Double.parseDouble(arguments[2]), Double.parseDouble(arguments[3]),
