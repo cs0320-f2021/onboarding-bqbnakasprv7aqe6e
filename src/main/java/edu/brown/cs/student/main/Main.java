@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -101,40 +103,39 @@ public final class Main {
       e.printStackTrace();
       System.out.println("ERROR: Invalid input for REPL");
     }
-
   }
-
-  // test
-
-  // test test
 
   private List<Star> stars(String filepath) {
     // Should type be ArrayList or List?
     List<Star> starList = new ArrayList<Star>();
-    // for each star
-      // add new star object to list
-    try (FileReader fr = new FileReader(filepath)) {
-      System.out.println("works!");
-    } catch (FileNotFoundException i) {
-      System.out.println("ERROR: " + i.getMessage() + "!");
-      return new ArrayList<>();
-    } catch (IOException i) {
-      System.out.println("ERROR: " + i.getMessage() + "!");
-      return new ArrayList<>();
-    }
 
-    try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
-      String input;
-      while ((input = br.readLine()) != null) {
-        input = input.trim();
-        String[] arguments = input.split(",");
+    System.out.println("stars entered");
+
+    try {
+      BufferedReader br = new BufferedReader(new FileReader(filepath, StandardCharsets.UTF_8));
+      Stream<String> allRows = br.lines();
+
+      List<String> processedRows = new ArrayList<>();
+
+      for (String row: (Iterable<String>) allRows::iterator) {
+        processedRows.add(row);
+
+        // check for header format
+      }
+
+      for (String row: processedRows.subList(1, processedRows.size())) {
+        String[] arguments = row.split(",");
+
+        System.out.println(arguments[0]);
 
         Star star = new Star(Integer.parseInt(arguments[0]), arguments[1],
-              Double.parseDouble(arguments[2]), Double.parseDouble(arguments[3]),
-              Double.parseDouble(arguments[4]));
+                Double.parseDouble(arguments[2]), Double.parseDouble(arguments[3]),
+                Double.parseDouble(arguments[4]));
 
         starList.add(star);
       }
+
+      System.out.println(starList);
       return starList;
     } catch (FileNotFoundException e) {
       System.out.println("ERROR: " + e.getMessage());
