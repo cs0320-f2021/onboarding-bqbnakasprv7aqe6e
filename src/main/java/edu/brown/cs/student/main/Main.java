@@ -2,6 +2,8 @@ package edu.brown.cs.student.main;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -102,11 +104,31 @@ public final class Main {
 
   }
 
-  private void stars(String filepath) {
+  private List<Star> stars(String filepath) {
     // Should type be ArrayList or List?
     List<Star> starList = new ArrayList<Star>();
     // for each star
       // add new star object to list
+    try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
+      String input;
+      while ((input = br.readLine()) != null) {
+        input = input.trim();
+        String[] arguments = input.split(" ");
+
+        Star star = new Star(Integer.parseInt(arguments[0]), arguments[1],
+              Double.parseDouble(arguments[2]), Double.parseDouble(arguments[3]),
+              Double.parseDouble(arguments[4]));
+
+        starList.add(star);
+      }
+      return starList;
+    } catch (FileNotFoundException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      return new ArrayList<>();
+    } catch (IOException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      return new ArrayList<>();
+    }
   }
 
   private List<String> naiveNeighborsCoord(int k, double x, double y, double z) {
@@ -116,7 +138,17 @@ public final class Main {
 
   private List<String> naiveNeighborsName(int k, String name) {
     // Should this be an ArrayList (in signature and actual usage?)
+    Star star = findStar(name);
     return new ArrayList<>();
+  }
+
+  private Star findStar(String name) {
+    return new Star(1, "", 1, 1, 1);
+  }
+
+  private double euclidianDistance(double x, double y, double z, Star star) {
+    return Math.sqrt(Math.pow(x - star.getX(), 2) + Math.pow(y - star.getY(), 2)
+        + Math.pow(z - star.getZ(), 2));
   }
 
   private void add(double n1, double n2) {
