@@ -104,6 +104,8 @@ public final class Main {
 
   }
 
+  // test
+
   private List<Star> stars(String filepath) {
     // Should type be ArrayList or List?
     List<Star> starList = new ArrayList<Star>();
