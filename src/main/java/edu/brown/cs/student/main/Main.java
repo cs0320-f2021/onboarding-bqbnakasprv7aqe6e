@@ -113,6 +113,16 @@ public final class Main {
     List<Star> starList = new ArrayList<Star>();
     // for each star
       // add new star object to list
+    try (FileReader fr = new FileReader(filepath)) {
+      System.out.println("works!");
+    } catch (FileNotFoundException i) {
+      System.out.println("ERROR: " + i.getMessage() + "!");
+      return new ArrayList<>();
+    } catch (IOException i) {
+      System.out.println("ERROR: " + i.getMessage() + "!");
+      return new ArrayList<>();
+    }
+
     try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
       String input;
       while ((input = br.readLine()) != null) {
