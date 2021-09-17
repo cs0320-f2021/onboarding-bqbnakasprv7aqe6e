@@ -18,6 +18,10 @@ public class Star {
     this.z = z;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public double getX() {
     return x;
   }

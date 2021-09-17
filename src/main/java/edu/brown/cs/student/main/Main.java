@@ -9,9 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,9 +43,11 @@ public final class Main {
   }
 
   private String[] args;
+  private List<Star> starList;
 
   private Main(String[] arguments) {
     this.args = arguments;
+    this.starList = new ArrayList<Star>();
   }
 
   @SuppressWarnings("checkstyle:TodoComment")
@@ -71,6 +71,9 @@ public final class Main {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
       while ((input = br.readLine()) != null) {
+
+        System.out.println(starList.size());
+
         try {
           input = input.trim();
           String[] arguments = input.split(" ");
@@ -107,7 +110,7 @@ public final class Main {
 
   private List<Star> stars(String filepath) {
     // Should type be ArrayList or List?
-    List<Star> starList = new ArrayList<Star>();
+//    List<Star> starList = new ArrayList<Star>();
 
     System.out.println("stars entered");
 
@@ -126,11 +129,16 @@ public final class Main {
       for (String row: processedRows.subList(1, processedRows.size())) {
         String[] arguments = row.split(",");
 
-        System.out.println(arguments[0]);
+//        System.out.println(arguments[0]);
 
         Star star = new Star(Integer.parseInt(arguments[0]), arguments[1],
                 Double.parseDouble(arguments[2]), Double.parseDouble(arguments[3]),
                 Double.parseDouble(arguments[4]));
+
+//        System.out.println(star.getName());
+//        System.out.println(star.getX());
+//        System.out.println(star.getY());
+//        System.out.println(star.getZ());
 
         starList.add(star);
       }
@@ -146,22 +154,60 @@ public final class Main {
     }
   }
 
-  private List<String> naiveNeighborsCoord(int k, double x, double y, double z) {
+  private List<Map.Entry<Star, Double>> naiveNeighborsCoord(int k, double x, double y, double z) {
     // Should this be an ArrayList (in signature and actual usage?)
-    return new ArrayList<>();
+
+    // for star in star list
+      // calculate euclidian distance
+      // add to sorted list
+
+    HashMap<Star, Double> starToDistMap = new HashMap<>();
+
+    for (Star star: starList) {
+      double dist = euclideanDistance(x, y, z, star);
+      starToDistMap.put(star, dist);
+    }
+
+    ArrayList<Map.Entry<Star, Double>> sortedStars = new ArrayList<>(starToDistMap.entrySet());
+    sortedStars.sort(Comparator.comparingDouble(Map.Entry::getValue));
+
+    if (k > starList.size()) {
+      System.out.println("Oh dear! There are only " + starList.size() + " stars.");
+      System.out.print("They are: ");
+      System.out.println(sortedStars.subList(0, starList.size()));
+      return sortedStars.subList(0, starList.size());
+    } else {
+      System.out.print("The " + k + " nearest stars are: ");
+      System.out.println(sortedStars.subList(0, k));
+      return sortedStars.subList(0, k);
+    }
   }
 
-  private List<String> naiveNeighborsName(int k, String name) {
+  // What even is List<Map.Entry<Star, Double>> ?
+  private List<Map.Entry<Star, Double>> naiveNeighborsName(int k, String name) {
     // Should this be an ArrayList (in signature and actual usage?)
-    Star star = findStar(name);
-    return new ArrayList<>();
+    try {
+      Star star = findStar(name);
+      return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ());
+    } catch (StarNotFoundException e) {
+      System.out.println("Star " + name + " not found.");
+
+      // What should happen here?
+      return new ArrayList<>();
+    }
   }
 
-  private Star findStar(String name) {
-    return new Star(1, "", 1, 1, 1);
+  private Star findStar(String name) throws StarNotFoundException {
+
+    for (Star star: starList) {
+      if (star.getName().equals(name)) {
+        return star;
+      }
+    }
+    throw new StarNotFoundException(name);
   }
 
-  private double euclidianDistance(double x, double y, double z, Star star) {
+  private double euclideanDistance(double x, double y, double z, Star star) {
     return Math.sqrt(Math.pow(x - star.getX(), 2) + Math.pow(y - star.getY(), 2)
         + Math.pow(z - star.getZ(), 2));
   }
