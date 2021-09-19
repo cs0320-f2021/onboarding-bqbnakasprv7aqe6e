@@ -84,11 +84,14 @@ public final class Main {
             System.out.println(arguments[1]);
             stars(arguments[1]);
           } else if (arguments[0].equals("naive_neighbors")) {
-            if (arguments.length == 5) {
+            System.out.println("naive_neighbors recognized");
+            if (arguments.length == 5 && !input.contains("\"")) {
               naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
                   Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]));
-            } else if (arguments.length == 3) {
-              naiveNeighborsName(Integer.parseInt(arguments[1]), arguments[2]);
+            } else {
+              String name = input.split("\"")[1];
+              System.out.println(name);
+              naiveNeighborsName(Integer.parseInt(arguments[1]), name);
             }
           } else if (arguments[0].equals("add") && arguments.length == 3) {
             add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
@@ -108,10 +111,13 @@ public final class Main {
     }
   }
 
-  private List<Star> stars(String filepath) {
-    // Should type be ArrayList or List?
-//    List<Star> starList = new ArrayList<Star>();
+  private void printStars(List<Star> stars) {
+    for (Star star: stars) {
+      System.out.println(star.getId());
+    }
+  }
 
+  private List<Star> stars(String filepath) {
     System.out.println("stars entered");
 
     try {
@@ -143,7 +149,7 @@ public final class Main {
         starList.add(star);
       }
 
-      System.out.println(starList);
+      System.out.println(starList.size());
       return starList;
     } catch (FileNotFoundException e) {
       System.out.println("ERROR: " + e.getMessage());
@@ -154,40 +160,51 @@ public final class Main {
     }
   }
 
-  private List<Map.Entry<Star, Double>> naiveNeighborsCoord(int k, double x, double y, double z) {
-    // Should this be an ArrayList (in signature and actual usage?)
-
-    // for star in star list
-      // calculate euclidian distance
-      // add to sorted list
-
-    HashMap<Star, Double> starToDistMap = new HashMap<>();
+  private List<Star> naiveNeighborsCoord(int k, double x, double y, double z) {
+    List<Star> nearestStarList = new ArrayList<>();
+    double maxDist = 0.0;
+    Star maxStar = null;
+    int c = 0;
 
     for (Star star: starList) {
       double dist = euclideanDistance(x, y, z, star);
-      starToDistMap.put(star, dist);
+      if (c < k) {
+        nearestStarList.add(star);
+        if (dist > maxDist) {
+          maxDist = dist;
+          maxStar = star;
+        }
+      } else if (dist < maxDist) {
+        nearestStarList.add(star);
+        nearestStarList.remove(maxStar);
+      } else if (dist == maxDist) {
+        Random random = new Random();
+        if (random.nextBoolean()) {
+          nearestStarList.add(star);
+          nearestStarList.remove(maxStar);
+          maxStar = star;
+        }
+      }
+      c++;
     }
 
-    ArrayList<Map.Entry<Star, Double>> sortedStars = new ArrayList<>(starToDistMap.entrySet());
-    sortedStars.sort(Comparator.comparingDouble(Map.Entry::getValue));
-
+    // replace with min(k, starList.size()
     if (k > starList.size()) {
       System.out.println("Oh dear! There are only " + starList.size() + " stars.");
-      System.out.print("They are: ");
-      System.out.println(sortedStars.subList(0, starList.size()));
-      return sortedStars.subList(0, starList.size());
+      System.out.println("They are: ");
+      printStars(nearestStarList.subList(0, starList.size()));
+      return nearestStarList.subList(0, starList.size());
     } else {
-      System.out.print("The " + k + " nearest stars are: ");
-      System.out.println(sortedStars.subList(0, k));
-      return sortedStars.subList(0, k);
+      System.out.println("The " + k + " nearest stars are: ");
+      printStars(nearestStarList.subList(0, k));
+      return nearestStarList.subList(0, k);
     }
   }
 
-  // What even is List<Map.Entry<Star, Double>> ?
-  private List<Map.Entry<Star, Double>> naiveNeighborsName(int k, String name) {
-    // Should this be an ArrayList (in signature and actual usage?)
+  private List<Star> naiveNeighborsName(int k, String name) {
     try {
       Star star = findStar(name);
+      System.out.println("naiveNeighborsName entered, star found");
       return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ());
     } catch (StarNotFoundException e) {
       System.out.println("Star " + name + " not found.");
