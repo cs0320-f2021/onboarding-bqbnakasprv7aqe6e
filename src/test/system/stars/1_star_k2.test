@@ -8,4 +8,6 @@ naive_neighbors 2 "Lonely Star"
 OUTPUT
 Read 1 stars from data/stars/one-star.csv
 1
+1
+There are no nearest stars.
 END

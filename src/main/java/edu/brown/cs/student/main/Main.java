@@ -92,59 +92,58 @@ public final class Main {
           // TO DO: complete your REPL by adding commands for addition "add" and subtraction
           // "subtract"
 
-          if (arguments[0].equals("stars") && arguments.length == 2) {
-//            System.out.println(arguments[1]);
-            stars(arguments[1]);
-          } else if (arguments[0].equals("naive_neighbors")) {
-//            System.out.println("naive_neighbors recognized");
-            if (Integer.parseInt(arguments[1]) <= 0) {
-              System.out.println("ERROR: k must be greater than zero");
+//          System.out.println(arguments[0]);
+
+          switch (arguments[0]) {
+            case "stars":
+              if (arguments.length == 2) {
+                stars(arguments[1]);
+              } else {
+                System.out.println("ERROR: The stars method requires a valid filepath as input.");
+              }
               break;
-            }
+            case "naive_neighbors":
+              if (Integer.parseInt(arguments[1]) <= 0) {
+                throw new Exception("ERROR: k must be greater than zero.");
+              }
 
-            if (starList.isEmpty()) {
-              System.out.println("ERROR: no stars data provided");
-              break;
-            }
+              if (starList.isEmpty()) {
+                throw new Exception("ERROR: No stars data provided.");
+              }
 
-            List<Star> nearestStars;
+              List<Star> nearestStars;
 
-            if (arguments.length == 5 && !input.contains("\"")) {
-              nearestStars = naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
-                      Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]));
-            } else {
-              String name = input.split("\"")[1];
-//              System.out.println(name);
-              nearestStars = naiveNeighborsName(Integer.parseInt(arguments[1]), name);
-            }
+              nearestStars = getStarList(input, arguments);
 
-            if (Integer.parseInt(arguments[1]) > starList.size()) {
+              if (nearestStars.isEmpty()) {
+                System.out.println("There are no nearest stars.");
+              } else if (Integer.parseInt(arguments[1]) > starList.size()) {
 //              System.out.println("Oh dear! There are only " + starList.size() + " stars.");
 //              System.out.println("They are: ");
-            } else if (nearestStars.isEmpty()) {
-              break;
-            } else {
+                printStars(nearestStars);
+              } else {
 //      System.out.println("The " + Integer.parseInt(arguments[1]) + " nearest stars are: ");
-            }
-            printStars(nearestStars);
-
-          } else if (arguments[0].equals("add")) {
-            if (arguments.length == 3) {
-              add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-            } else {
-              System.out.println("ERROR:");
-            }
-          } else if (arguments[0].equals("subtract")) {
-            if (arguments.length == 3) {
-              subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-            } else {
-              System.out.println("ERROR:");
-            }
-          } else {
-            // Is this bad style (to not be in try/catch block?)
-            // https://edstem.org/us/courses/13003/discussion/622232
-            Double.parseDouble(arguments[0]);
-            System.out.println(arguments[0]);
+                printStars(nearestStars);
+              }
+              break;
+            case "add":
+              if (arguments.length == 3) {
+                add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+              } else {
+                System.out.println("ERROR:");
+              }
+              break;
+            case "subtract":
+              if (arguments.length == 3) {
+                subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+              } else {
+                System.out.println("ERROR:");
+              }
+              break;
+            default:
+              Double.parseDouble(arguments[0]);
+              System.out.println(arguments[0]);
+              break;
           }
         } catch (Exception e) {
           // e.printStackTrace();
@@ -155,6 +154,19 @@ public final class Main {
         e.printStackTrace();
         System.out.println("ERROR: Invalid input for REPL");
       }
+  }
+
+  private List<Star> getStarList(String input, String[] arguments) {
+    List<Star> nearestStars;
+    if (arguments.length == 5 && !input.contains("\"")) {
+      nearestStars = naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
+              Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]), false);
+    } else {
+      String name = input.split("\"")[1];
+//              System.out.println(name);
+      nearestStars = naiveNeighborsName(Integer.parseInt(arguments[1]), name);
+    }
+    return nearestStars;
   }
 
   /**
@@ -223,7 +235,7 @@ public final class Main {
    * @param z a double, the z-coordinate of the position of interest
    * @return a list of stars, the k stars nearest the input location
    */
-  private List<Star> naiveNeighborsCoord(int k, double x, double y, double z) {
+  private List<Star> naiveNeighborsCoord(int k, double x, double y, double z, Boolean nameInput) {
     List<Star> nearestStarList = new ArrayList<>();
     double maxDist = 0.0;
     Star maxStar = null;
@@ -231,7 +243,7 @@ public final class Main {
 
     for (Star star: starList) {
       double dist = euclideanDistance(x, y, z, star);
-      if (!(dist == 0)) {
+      if (!(nameInput && dist == 0)) {
         if (c <= k) {
           nearestStarList.add(star);
 //        System.out.println(c);
@@ -274,7 +286,6 @@ public final class Main {
     }
   }
 
-
   /**
    * Method to find the star farthest from a given location within a list of stars
    * @param x a double, the x-coordinate of the position of interest
@@ -307,7 +318,7 @@ public final class Main {
   private List<Star> naiveNeighborsName(int k, String name) {
     try {
       Star star = findStar(name);
-      return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ());
+      return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ(), true);
     } catch (StarNotFoundException e) {
       System.out.println("Star " + name + " not found.");
 

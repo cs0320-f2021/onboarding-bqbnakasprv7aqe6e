@@ -1,7 +1,9 @@
 INPUT
+naive_neighbors 5 0 0 0
 stars data/stars/ten-star.csv
 naive_neighbors 5 0 0 0
 OUTPUT
+ERROR: no stars data provided
 Read 10 stars from data/stars/ten-star.csv
 0
 70667
