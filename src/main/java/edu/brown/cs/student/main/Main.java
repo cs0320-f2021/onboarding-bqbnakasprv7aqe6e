@@ -102,7 +102,12 @@ public final class Main {
               break;
             }
 
-            List<Star> nearestStars = new ArrayList<Star>();
+            if (starList.isEmpty()) {
+              System.out.println("ERROR: no stars data provided");
+              break;
+            }
+
+            List<Star> nearestStars;
 
             if (arguments.length == 5 && !input.contains("\"")) {
               nearestStars = naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
