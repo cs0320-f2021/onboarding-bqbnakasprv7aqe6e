@@ -60,7 +60,7 @@ public final class Main {
 
     // use "--port <n>" to specify what port on which the server runs
     parser.accepts("port").withRequiredArg().ofType(Integer.class)
-        .defaultsTo(DEFAULT_PORT);
+            .defaultsTo(DEFAULT_PORT);
 
     OptionSet options = parser.parse(args);
     if (options.has("gui")) {
@@ -70,9 +70,9 @@ public final class Main {
     // TO DO: Add your REPL here!
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
-      while ((input = br.readLine()) != null) {
 
-        System.out.println(starList.size());
+      while ((input = br.readLine()) != null) {
+//        System.out.println(starList.size());
 
         try {
           input = input.trim();
@@ -81,23 +81,52 @@ public final class Main {
           // "subtract"
 
           if (arguments[0].equals("stars") && arguments.length == 2) {
-            System.out.println(arguments[1]);
+//            System.out.println(arguments[1]);
             stars(arguments[1]);
           } else if (arguments[0].equals("naive_neighbors")) {
-            System.out.println("naive_neighbors recognized");
+//            System.out.println("naive_neighbors recognized");
+            if (Integer.parseInt(arguments[1]) <= 0) {
+              System.out.println("ERROR: k must be greater than zero");
+              break;
+            }
+
+            List<Star> nearestStars = new ArrayList<Star>();
+
             if (arguments.length == 5 && !input.contains("\"")) {
-              naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
-                  Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]));
+              nearestStars = naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
+                      Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]));
             } else {
               String name = input.split("\"")[1];
-              System.out.println(name);
-              naiveNeighborsName(Integer.parseInt(arguments[1]), name);
+//              System.out.println(name);
+              nearestStars = naiveNeighborsName(Integer.parseInt(arguments[1]), name);
             }
-          } else if (arguments[0].equals("add") && arguments.length == 3) {
-            add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
-          } else if (arguments[0].equals("subtract") && arguments.length == 3) {
-            subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+
+            if (Integer.parseInt(arguments[1]) > starList.size()) {
+//              System.out.println("Oh dear! There are only " + starList.size() + " stars.");
+//              System.out.println("They are: ");
+            } else if (nearestStars.isEmpty()) {
+              break;
+            } else {
+//      System.out.println("The " + Integer.parseInt(arguments[1]) + " nearest stars are: ");
+            }
+            printStars(nearestStars);
+
+          } else if (arguments[0].equals("add")) {
+            if (arguments.length == 3) {
+              add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+            } else {
+              System.out.println("ERROR:");
+            }
+          } else if (arguments[0].equals("subtract")) {
+            if (arguments.length == 3) {
+              subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
+            } else {
+              System.out.println("ERROR:");
+            }
           } else {
+            // Is this bad style (to not be in try/catch block?)
+            // https://edstem.org/us/courses/13003/discussion/622232
+            Double.parseDouble(arguments[0]);
             System.out.println(arguments[0]);
           }
         } catch (Exception e) {
@@ -106,9 +135,9 @@ public final class Main {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println("ERROR: Invalid input for REPL");
-    }
+        e.printStackTrace();
+        System.out.println("ERROR: Invalid input for REPL");
+      }
   }
 
   private void printStars(List<Star> stars) {
@@ -118,7 +147,7 @@ public final class Main {
   }
 
   private List<Star> stars(String filepath) {
-    System.out.println("stars entered");
+//    System.out.println("stars entered");
 
     try {
       BufferedReader br = new BufferedReader(new FileReader(filepath, StandardCharsets.UTF_8));
@@ -149,7 +178,7 @@ public final class Main {
         starList.add(star);
       }
 
-      System.out.println(starList.size());
+      System.out.println("Read " + starList.size() + " stars from " + filepath);
       return starList;
     } catch (FileNotFoundException e) {
       System.out.println("ERROR: " + e.getMessage());
@@ -168,43 +197,68 @@ public final class Main {
 
     for (Star star: starList) {
       double dist = euclideanDistance(x, y, z, star);
-      if (c < k) {
-        nearestStarList.add(star);
-        if (dist > maxDist) {
-          maxDist = dist;
-          maxStar = star;
-        }
-      } else if (dist < maxDist) {
-        nearestStarList.add(star);
-        nearestStarList.remove(maxStar);
-      } else if (dist == maxDist) {
-        Random random = new Random();
-        if (random.nextBoolean()) {
+      if (!(dist == 0)) {
+        if (c <= k) {
+          nearestStarList.add(star);
+//        System.out.println(c);
+//        System.out.println(maxDist);
+//        System.out.println(maxStar.getId());
+          if (dist > maxDist) {
+            maxDist = dist;
+            maxStar = star;
+//          System.out.println(c);
+//          System.out.println(maxDist);
+//          System.out.println(maxStar.getId());
+          }
+        } else if (dist < maxDist) {
           nearestStarList.add(star);
           nearestStarList.remove(maxStar);
-          maxStar = star;
+          maxStar = findMax(x, y, z, nearestStarList);
+          maxDist = euclideanDistance(x, y, z, maxStar);
+//        System.out.println(c);
+//        System.out.println(maxDist);
+//        System.out.println(maxStar.getId());
+        } else if (dist == maxDist) {
+          Random random = new Random();
+          if (random.nextBoolean()) {
+            nearestStarList.add(star);
+            nearestStarList.remove(maxStar);
+            maxStar = star;
+          }
+//        System.out.println(c);
+//        System.out.println(maxDist);
+//        System.out.println(maxStar.getId());
         }
       }
       c++;
     }
 
-    // replace with min(k, starList.size()
-    if (k > starList.size()) {
-      System.out.println("Oh dear! There are only " + starList.size() + " stars.");
-      System.out.println("They are: ");
-      printStars(nearestStarList.subList(0, starList.size()));
-      return nearestStarList.subList(0, starList.size());
+    if (nearestStarList.isEmpty()) {
+      return new ArrayList<Star>();
     } else {
-      System.out.println("The " + k + " nearest stars are: ");
-      printStars(nearestStarList.subList(0, k));
-      return nearestStarList.subList(0, k);
+      return nearestStarList.subList(0, Math.min(k, starList.size()));
     }
+  }
+
+
+  private Star findMax(double x, double y, double z, List<Star> starSublist) {
+    double maxDist = 0.0;
+    Star maxStar = null;
+
+    for (Star star: starSublist) {
+      double dist = euclideanDistance(x, y, z, star);
+      if (dist > maxDist) {
+        maxDist = dist;
+        maxStar = star;
+      }
+    }
+
+    return maxStar;
   }
 
   private List<Star> naiveNeighborsName(int k, String name) {
     try {
       Star star = findStar(name);
-      System.out.println("naiveNeighborsName entered, star found");
       return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ());
     } catch (StarNotFoundException e) {
       System.out.println("Star " + name + " not found.");
@@ -212,6 +266,9 @@ public final class Main {
       // What should happen here?
       return new ArrayList<>();
     }
+//      System.out.println("naiveNeighborsName entered, star found");
+
+
   }
 
   private Star findStar(String name) throws StarNotFoundException {
