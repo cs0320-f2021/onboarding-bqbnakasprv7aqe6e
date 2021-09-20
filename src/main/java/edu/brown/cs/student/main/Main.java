@@ -55,7 +55,7 @@ public final class Main {
    * Constructor for Main.
    * @param arguments
    */
-  private Main(String[] arguments) {
+  Main(String[] arguments) {
     this.args = arguments;
     this.starList = new ArrayList<Star>();
   }
