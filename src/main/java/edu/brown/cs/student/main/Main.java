@@ -42,15 +42,27 @@ public final class Main {
     new Main(arguments).run();
   }
 
+  /**
+   * Field for args, an Array of strings.
+   */
   private String[] args;
+  /**
+   * Field for starList, the list of Star objects in which data read in will be stored.
+   */
   private List<Star> starList;
 
+  /**
+   * Constructor for Main.
+   * @param arguments
+   */
   private Main(String[] arguments) {
     this.args = arguments;
     this.starList = new ArrayList<Star>();
   }
 
-  @SuppressWarnings("checkstyle:TodoComment")
+  /**
+   * Method to run REPL.
+   */
   private void run() {
     // set up parsing of command line flags
     OptionParser parser = new OptionParser();
@@ -140,12 +152,21 @@ public final class Main {
       }
   }
 
+  /**
+   * Method to print stars.
+   * @param stars a list of Star objects to be printed
+   */
   private void printStars(List<Star> stars) {
     for (Star star: stars) {
       System.out.println(star.getId());
     }
   }
 
+  /**
+   * Method to load in star data.
+   * @param filepath a String, the path to a file containing star data
+   * @return a list of the Stars in the input file
+   */
   private List<Star> stars(String filepath) {
 //    System.out.println("stars entered");
 
@@ -189,6 +210,14 @@ public final class Main {
     }
   }
 
+  /**
+   * Method to return a list of the k stars which are closest to a given location
+   * @param k the number of stars to be searched for
+   * @param x a double, the x-coordinate of the position of interest
+   * @param y a double, the y-coordinate of the position of interest
+   * @param z a double, the z-coordinate of the position of interest
+   * @return a list of stars, the k stars nearest the input location
+   */
   private List<Star> naiveNeighborsCoord(int k, double x, double y, double z) {
     List<Star> nearestStarList = new ArrayList<>();
     double maxDist = 0.0;
@@ -241,6 +270,14 @@ public final class Main {
   }
 
 
+  /**
+   * Method to find the star farthest from a given location within a list of stars
+   * @param x a double, the x-coordinate of the position of interest
+   * @param y a double, the y-coordinate of the position of interest
+   * @param z a double, the z-coordinate of the position of interest
+   * @param starSublist a list of stars
+   * @return a Star, the maximal-distance star from the input location
+   */
   private Star findMax(double x, double y, double z, List<Star> starSublist) {
     double maxDist = 0.0;
     Star maxStar = null;
@@ -256,6 +293,12 @@ public final class Main {
     return maxStar;
   }
 
+  /**
+   * Method to return a list of the k stars which are closest to a given star.
+   * @param k the number of stars to be searched for
+   * @param name the name of the star of interest
+   * @return a list of stars, the k stars nearest the input star
+   */
   private List<Star> naiveNeighborsName(int k, String name) {
     try {
       Star star = findStar(name);
@@ -267,10 +310,15 @@ public final class Main {
       return new ArrayList<>();
     }
 //      System.out.println("naiveNeighborsName entered, star found");
-
-
   }
 
+  /**
+   * Method to find an input star in a list of stars.
+   * @param name the name of the star of interest
+   * @return a star, the input star if it is in the list
+   * @throws StarNotFoundException thrown if star is not within starList (i.e., no star with the name given is within
+   * the data that has been loaded or no file has been loaded)
+   */
   private Star findStar(String name) throws StarNotFoundException {
 
     for (Star star: starList) {
@@ -281,16 +329,34 @@ public final class Main {
     throw new StarNotFoundException(name);
   }
 
+  /**
+   * Method to calculate the Euclidean distance between a given position and star.
+   * @param x a double, the x-coordinate of the position of interest
+   * @param y a double, the y-coordinate of the position of interest
+   * @param z a double, the z-coordinate of the position of interest
+   * @param star a Star, the star of interest
+   * @return a double, the distance between the given location and star
+   */
   private double euclideanDistance(double x, double y, double z, Star star) {
     return Math.sqrt(Math.pow(x - star.getX(), 2) + Math.pow(y - star.getY(), 2)
         + Math.pow(z - star.getZ(), 2));
   }
 
+  /**
+   * Method to add two input numbers
+   * @param n1 a double to be added
+   * @param n2 a double to be added
+   */
   private void add(double n1, double n2) {
     MathBot mb = new MathBot();
     System.out.println(mb.add(n1, n2));
   }
 
+  /**
+   * Method to subtract two numbers
+   * @param n1 a double, the minuend to be subtracted from
+   * @param n2 a double, the subtrahend to subtract from the minuend
+   */
   private void subtract(double n1, double n2) {
     MathBot mb = new MathBot();
     System.out.println(mb.subtract(n1, n2));
