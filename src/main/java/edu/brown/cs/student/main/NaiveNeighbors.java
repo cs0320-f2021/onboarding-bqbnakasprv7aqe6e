@@ -23,16 +23,6 @@ public class NaiveNeighbors {
     }
 
     /**
-     * Method to print stars.
-     * @param stars a list of Star objects to be printed
-     */
-    public void printStars(List<Star> stars) {
-        for (Star star: stars) {
-            System.out.println(star.getId());
-        }
-    }
-
-    /**
      * Method to retrieve a list of nearest stars given REPL input and processed arguments.
      * @param input a string, the user input to the REPL
      * @param arguments an Array of strings, the user input split on spaces
@@ -40,6 +30,7 @@ public class NaiveNeighbors {
      */
     public List<Star> getStarList(String input, String[] arguments) {
         List<Star> nearestStars;
+
         if (arguments.length == 5 && !input.contains("\"")) {
             nearestStars = naiveNeighborsCoord(Integer.parseInt(arguments[1]), Double.parseDouble(arguments[2]),
                     Double.parseDouble(arguments[3]), Double.parseDouble(arguments[4]), false);
@@ -155,7 +146,6 @@ public class NaiveNeighbors {
                 maxStar = star;
             }
         }
-
         return maxStar;
     }
 
@@ -170,5 +160,15 @@ public class NaiveNeighbors {
     private double euclideanDistance(double x, double y, double z, Star star) {
         return Math.sqrt(Math.pow(x - star.getX(), 2) + Math.pow(y - star.getY(), 2)
                 + Math.pow(z - star.getZ(), 2));
+    }
+
+    /**
+     * Method to print stars.
+     * @param stars a list of Star objects to be printed
+     */
+    public void printStars(List<Star> stars) {
+        for (Star star: stars) {
+            System.out.println(star.getId());
+        }
     }
 }
