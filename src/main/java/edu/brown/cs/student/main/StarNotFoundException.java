@@ -17,4 +17,9 @@ public class StarNotFoundException extends Exception {
     public StarNotFoundException(String name) {
         this.name = name;
     }
+
+    /**
+     * Method to get the name of the star not found.
+     */
+    public String getName() { return this.name; }
 }

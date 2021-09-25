@@ -107,26 +107,31 @@ public final class Main {
               }
 
               NaiveNeighbors naiveNeighbors = new NaiveNeighbors(starList);
-              List<Star> nearestStars = naiveNeighbors.getStarList(input, arguments);
 
-              if (nearestStars.isEmpty()) {
-                System.out.println("There are no nearest stars.");
-              } else {
-                naiveNeighbors.printStars(nearestStars);
+              try {
+                List<Star> nearestStars = naiveNeighbors.findNearestNeighbors(input);
+
+                if (nearestStars.isEmpty()) {
+                  System.out.println("There are no nearest stars.");
+                } else {
+                  naiveNeighbors.printStars(nearestStars);
+                }
+                break;
+              } catch (StarNotFoundException e) {
+                throw new Exception("ERROR: Star " + e.getName() + " not found.");
               }
-              break;
             case "add":
               if (arguments.length == 3) {
                 add(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
               } else {
-                System.out.println("ERROR:");
+                System.out.println("ERROR: The add method requires two real number inputs.");
               }
               break;
             case "subtract":
               if (arguments.length == 3) {
                 subtract(Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2]));
               } else {
-                System.out.println("ERROR:");
+                System.out.println("ERROR: The subtract method requires two real number inputs.");
               }
               break;
             default:

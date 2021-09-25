@@ -23,12 +23,12 @@ public class NaiveNeighbors {
     }
 
     /**
-     * Method to retrieve a list of nearest stars given REPL input and processed arguments.
+     * Method to find a list of nearest stars given REPL input and processed arguments.
      * @param input a string, the user input to the REPL
-     * @param arguments an Array of strings, the user input split on spaces
      * @return the list of the k stars nearest the input location or star
      */
-    public List<Star> getStarList(String input, String[] arguments) {
+    public List<Star> findNearestNeighbors(String input) throws StarNotFoundException {
+        String[] arguments = input.split(" ");
         List<Star> nearestStars;
 
         if (arguments.length == 5 && !input.contains("\"")) {
@@ -49,7 +49,7 @@ public class NaiveNeighbors {
      * @param z a double, the z-coordinate of the position of interest
      * @return a list of stars, the k stars nearest the input location
      */
-    private List<Star> naiveNeighborsCoord(int k, double x, double y, double z, Boolean nameInput) {
+    protected List<Star> naiveNeighborsCoord(int k, double x, double y, double z, Boolean nameInput) {
         List<Star> nearestStarList = new ArrayList<>();
         Boolean starGiven = false;
         double maxDist = 0.0;
@@ -61,7 +61,7 @@ public class NaiveNeighbors {
             if (nameInput && dist == 0) {
                 starGiven = true;
             } else {
-                if (c <= k) {
+                if (c < k && !starGiven || c <= k && starGiven) {
                     nearestStarList.add(star);
                     if (dist > maxDist) {
                         maxDist = dist;
@@ -82,16 +82,9 @@ public class NaiveNeighbors {
                 }
             }
             c++;
+            System.out.println(nearestStarList);
         }
-
-        if (nearestStarList.isEmpty()) {
-            return new ArrayList<Star>();
-        } else {
-            if (starGiven && k == starList.size()) {
-                k = k - 1;
-            }
-            return nearestStarList.subList(0, Math.min(k, starList.size()));
-        }
+        return nearestStarList;
     }
 
     /**
@@ -100,14 +93,9 @@ public class NaiveNeighbors {
      * @param name the name of the star of interest
      * @return a list of stars, the k stars nearest the input star
      */
-    private List<Star> naiveNeighborsName(int k, String name) {
-        try {
-            Star star = findStar(name);
-            return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ(), true);
-        } catch (StarNotFoundException e) {
-            System.out.println("Star " + name + " not found.");
-            return new ArrayList<>();
-        }
+    protected List<Star> naiveNeighborsName(int k, String name) throws StarNotFoundException {
+        Star star = findStar(name);
+        return naiveNeighborsCoord(k, star.getX(), star.getY(), star.getZ(), true);
     }
 
     /**
@@ -117,7 +105,7 @@ public class NaiveNeighbors {
      * @throws StarNotFoundException thrown if star is not within starList (i.e., no star with the name given is within
      * the data that has been loaded or no file has been loaded)
      */
-    private Star findStar(String name) throws StarNotFoundException {
+    protected Star findStar(String name) throws StarNotFoundException {
 
         for (Star star: starList) {
             if (star.getName().equals(name)) {
@@ -135,7 +123,7 @@ public class NaiveNeighbors {
      * @param starSublist a list of stars
      * @return a Star, the maximal-distance star from the input location
      */
-    private Star findMax(double x, double y, double z, List<Star> starSublist) {
+    protected Star findMax(double x, double y, double z, List<Star> starSublist) {
         double maxDist = 0.0;
         Star maxStar = null;
 
@@ -157,7 +145,7 @@ public class NaiveNeighbors {
      * @param star a Star, the star of interest
      * @return a double, the distance between the given location and star
      */
-    private double euclideanDistance(double x, double y, double z, Star star) {
+    protected double euclideanDistance(double x, double y, double z, Star star) {
         return Math.sqrt(Math.pow(x - star.getX(), 2) + Math.pow(y - star.getY(), 2)
                 + Math.pow(z - star.getZ(), 2));
     }
@@ -166,7 +154,7 @@ public class NaiveNeighbors {
      * Method to print stars.
      * @param stars a list of Star objects to be printed
      */
-    public void printStars(List<Star> stars) {
+    protected void printStars(List<Star> stars) {
         for (Star star: stars) {
             System.out.println(star.getId());
         }
